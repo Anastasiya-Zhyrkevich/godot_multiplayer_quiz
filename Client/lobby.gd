@@ -33,18 +33,14 @@ func _on_join_pressed():
 		return
 
 	var ip = $Connect/IPAddress.text
-	if not ip.is_valid_ip_address():
-		$Connect/ErrorLabel.text = "Invalid IP address!"
-		return
 
 	$Connect/ErrorLabel.text = ""
 	$Connect/Host.disabled = true
 	$Connect/Join.disabled = true
 
 	var player_name = $Connect/Name.text
+	print(ip)
 	gamestate.join_game(ip, player_name)
-	$Connect/ErrorLabel.text = "meow"
-
 
 func _on_connection_success():
 	$Connect.hide()

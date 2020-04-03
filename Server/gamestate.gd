@@ -136,10 +136,13 @@ func host_game(new_player_name):
 	"""
 	print("host_game")
 	var server = WebSocketServer.new();
-	server.listen(DEFAULT_PORT, PoolStringArray(), true);
+	var OS_PORT = OS.get_environment("PORT");
+	print(OS_PORT)
+	var error = server.listen(int(OS_PORT), PoolStringArray(), true);
 	get_tree().set_network_peer(server);
 	
 	servers[0] = server
+	print (str(error))
 
 
 func join_game(ip, new_player_name):

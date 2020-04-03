@@ -131,7 +131,6 @@ margin_bottom = 139.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 custom_colors/font_color = Color( 0.820312, 0.291595, 0.291595, 1 )
-text = "woof"
 align = 1
 
 [node name="ErrorDialog" type="AcceptDialog" parent="."]
