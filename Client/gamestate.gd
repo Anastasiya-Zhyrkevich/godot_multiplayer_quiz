@@ -148,6 +148,7 @@ func join_game(ip, new_player_name):
 	client.create_client(ip, DEFAULT_PORT)
 	get_tree().set_network_peer(client)
 	"""
+	print("mewo")
 	var client = WebSocketClient.new();
 	var url = "ws://" + ip + ":" + str(DEFAULT_PORT) # You use "ws://" at the beginning of the address for WebSocket connections
 	var error = client.connect_to_url(url, PoolStringArray(), true);

@@ -14,7 +14,6 @@ func _ready():
 		var desktop_path = OS.get_system_dir(0).replace("\\", "/").split("/")
 		$Connect/Name.text = desktop_path[desktop_path.size() - 2]
 
-
 func _on_host_pressed():
 	if $Connect/Name.text == "":
 		$Connect/ErrorLabel.text = "Invalid name!"
@@ -27,7 +26,6 @@ func _on_host_pressed():
 	var player_name = $Connect/Name.text
 	gamestate.host_game(player_name)
 	refresh_lobby()
-
 
 func _on_join_pressed():
 	if $Connect/Name.text == "":
@@ -45,6 +43,7 @@ func _on_join_pressed():
 
 	var player_name = $Connect/Name.text
 	gamestate.join_game(ip, player_name)
+	$Connect/ErrorLabel.text = "meow"
 
 
 func _on_connection_success():
@@ -86,3 +85,4 @@ func refresh_lobby():
 
 func _on_start_pressed():
 	gamestate.begin_game()
+
