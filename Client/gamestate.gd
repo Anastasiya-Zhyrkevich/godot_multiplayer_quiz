@@ -13,6 +13,8 @@ var player_name = "The Warrior"
 var players = {}
 var players_ready = []
 
+var server_id = 0
+
 var servers = {}
 var clients = {}
 
@@ -27,7 +29,7 @@ signal game_error(what)
 # Callback from SceneTree.
 func _player_connected(id):
 	# Registration of a client beings here, tell the connected player that we are here.
-	print("_player_connected" + str(id))
+	print("_player_connected " + str(id) + " " + player_name)
 	
 	rpc_id(id, "register_player", player_name)
 
@@ -65,9 +67,16 @@ func _connected_fail():
 
 remote func register_player(new_player_name):
 	var id = get_tree().get_rpc_sender_id()
-	print("register_player" + str(id))
+	print("register_player " + str(id))
 	players[id] = new_player_name
 	emit_signal("player_list_changed")
+
+
+remote func register_server_id(server_player_name):
+	var id = get_tree().get_rpc_sender_id()
+	print("server is: " + str(id))
+	server_id = id
+
 
 
 func unregister_player(id):
@@ -160,13 +169,12 @@ func get_player_name():
 
 
 func begin_game():
+	# Local run
 	assert(get_tree().is_network_server())
-
 	print(players)
-	# Call to pre-start game with the spawn points.
-	for p in players:
-		rpc_id(p, "pre_start_game")
-
+	
+	
+	
 	pre_start_game()
 
 

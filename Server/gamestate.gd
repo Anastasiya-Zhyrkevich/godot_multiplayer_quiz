@@ -13,8 +13,14 @@ var player_name = "The Warrior"
 var players = {}
 var players_ready = []
 
+var server_id = 0
+
 var servers = {}
 var clients = {}
+
+var TASKS_PATH = 'res://tasks.json'
+var tasks = []
+var players_to_answer_given = {}
 
 
 # Signals to let lobby GUI know what's going on.
@@ -23,11 +29,16 @@ signal connection_failed()
 signal connection_succeeded()
 signal game_ended()
 signal game_error(what)
+signal tasks_missing()
+
 
 # Callback from SceneTree.
 func _player_connected(id):
 	# Registration of a client beings here, tell the connected player that we are here.
+	print("_player_connected " + str(id) + " " + player_name)
+	
 	rpc_id(id, "register_player", player_name)
+	rpc_id(id, "register_server_id", player_name)
 
 
 # Callback from SceneTree.
@@ -63,14 +74,35 @@ func _connected_fail():
 
 remote func register_player(new_player_name):
 	var id = get_tree().get_rpc_sender_id()
-	print(id)
+	print("register_player " + str(id))
 	players[id] = new_player_name
 	emit_signal("player_list_changed")
+
+
+remote func register_server_id(server_player_name):
+	var id = get_tree().get_rpc_sender_id()
+	print("server is: " + str(id))
+	server_id = id
 
 
 func unregister_player(id):
 	players.erase(id)
 	emit_signal("player_list_changed")
+
+
+func read_tasks():
+	print("read_tasks")
+	var file = File.new()
+	
+	if not file.file_exists(TASKS_PATH):
+		emit_signal("tasks_missing")
+		print("tasks_missing")
+		return
+	
+	file.open(TASKS_PATH, File.READ)
+	var text = file.get_as_text()
+	tasks = parse_json(text)
+	file.close()
 
 
 remote func pre_start_game():
@@ -130,11 +162,6 @@ remote func ready_to_start(id):
 
 func host_game(new_player_name):
 	player_name = new_player_name
-	"""
-	var host = NetworkedMultiplayerENet.new()
-	host.create_server(DEFAULT_PORT, MAX_PEERS)
-	get_tree().set_network_peer(host)
-	"""
 	print("host_game")
 	var server = WebSocketServer.new();
 	# var OS_PORT = OS.get_environment("PORT");
@@ -149,11 +176,6 @@ func host_game(new_player_name):
 
 func join_game(ip, new_player_name):
 	player_name = new_player_name
-	"""
-	var client = NetworkedMultiplayerENet.new()
-	client.create_client(ip, DEFAULT_PORT)
-	get_tree().set_network_peer(client)
-	"""
 	print("join_game")
 	var client = WebSocketClient.new();
 	var url = "ws://" + ip  # You use "ws://" at the beginning of the address for WebSocket connections
@@ -174,10 +196,6 @@ func get_player_name():
 func begin_game():
 	
 	assert(get_tree().is_network_server())
-
-	# Call to pre-start game with the spawn points.
-	for p in players:
-		rpc_id(p, "pre_start_game")
 	
 	print ("begin_game")
 	pre_start_game()
@@ -198,6 +216,8 @@ func _ready():
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
+	
+	read_tasks()
 
 func _process(delta):
 	for s in servers:

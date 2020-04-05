@@ -1,10 +1,6 @@
 extends Node2D
 
-var path = 'res://tasks.json'
-
 const TASK_NODE = preload("res://task.tscn")
-
-signal tasks_missing()
 
 var tasks = []
 
@@ -12,17 +8,6 @@ var tasks_per_round = 3
 
 func _ready():
 	print("_ready")
-	var file = File.new()
-	
-	if not file.file_exists(path):
-		emit_signal("tasks_missing")
-		print("tasks_missing")
-		return
-	
-	file.open(path, File.READ)
-	var text = file.get_as_text()
-	tasks = parse_json(text)
-	file.close()
 	
 	var window_size = get_viewport().size
 	
