@@ -27,6 +27,8 @@ signal game_error(what)
 # Callback from SceneTree.
 func _player_connected(id):
 	# Registration of a client beings here, tell the connected player that we are here.
+	print("_player_connected" + str(id))
+	
 	rpc_id(id, "register_player", player_name)
 
 
@@ -63,7 +65,7 @@ func _connected_fail():
 
 remote func register_player(new_player_name):
 	var id = get_tree().get_rpc_sender_id()
-	print(id)
+	print("register_player" + str(id))
 	players[id] = new_player_name
 	emit_signal("player_list_changed")
 
@@ -73,15 +75,16 @@ func unregister_player(id):
 	emit_signal("player_list_changed")
 
 
-remote func pre_start_game(spawn_points):
+remote func pre_start_game():
 	# Change scene.
 	var world = load("res://world.tscn").instance()
 	get_tree().get_root().add_child(world)
-
+	
 	get_tree().get_root().get_node("Lobby").hide()
 
 	var player_scene = load("res://player.tscn")
 
+	var spawn_points = {}
 	for p_id in spawn_points:
 		var spawn_pos = world.get_node("SpawnPoints/" + str(spawn_points[p_id])).position
 		var player = player_scene.instance()
@@ -129,11 +132,6 @@ remote func ready_to_start(id):
 
 func host_game(new_player_name):
 	player_name = new_player_name
-	"""
-	var host = NetworkedMultiplayerENet.new()
-	host.create_server(DEFAULT_PORT, MAX_PEERS)
-	get_tree().set_network_peer(host)
-	"""
 	var server = WebSocketServer.new();
 	server.listen(DEFAULT_PORT, PoolStringArray(), true);
 	get_tree().set_network_peer(server);
@@ -143,11 +141,6 @@ func host_game(new_player_name):
 
 func join_game(ip, new_player_name):
 	player_name = new_player_name
-	"""
-	var client = NetworkedMultiplayerENet.new()
-	client.create_client(ip, DEFAULT_PORT)
-	get_tree().set_network_peer(client)
-	"""
 	var client = WebSocketClient.new();
 	# var url = "ws://" + ip + ":" + str(DEFAULT_PORT) # You use "ws://" at the beginning of the address for WebSocket connections
 	var url = "ws://" + ip
@@ -169,18 +162,12 @@ func get_player_name():
 func begin_game():
 	assert(get_tree().is_network_server())
 
-	# Create a dictionary with peer id and respective spawn points, could be improved by randomizing.
-	var spawn_points = {}
-	spawn_points[1] = 0 # Server in spawn point 0.
-	var spawn_point_idx = 1
-	for p in players:
-		spawn_points[p] = spawn_point_idx
-		spawn_point_idx += 1
+	print(players)
 	# Call to pre-start game with the spawn points.
 	for p in players:
-		rpc_id(p, "pre_start_game", spawn_points)
+		rpc_id(p, "pre_start_game")
 
-	pre_start_game(spawn_points)
+	pre_start_game()
 
 
 func end_game():

@@ -73,7 +73,7 @@ func unregister_player(id):
 	emit_signal("player_list_changed")
 
 
-remote func pre_start_game(spawn_points):
+remote func pre_start_game():
 	# Change scene.
 	var world = load("res://world.tscn").instance()
 	get_tree().get_root().add_child(world)
@@ -82,6 +82,7 @@ remote func pre_start_game(spawn_points):
 
 	var player_scene = load("res://player.tscn")
 
+	var spawn_points = {}
 	for p_id in spawn_points:
 		var spawn_pos = world.get_node("SpawnPoints/" + str(spawn_points[p_id])).position
 		var player = player_scene.instance()
@@ -174,18 +175,12 @@ func begin_game():
 	
 	assert(get_tree().is_network_server())
 
-	# Create a dictionary with peer id and respective spawn points, could be improved by randomizing.
-	var spawn_points = {}
-	spawn_points[1] = 0 # Server in spawn point 0.
-	var spawn_point_idx = 1
-	for p in players:
-		spawn_points[p] = spawn_point_idx
-		spawn_point_idx += 1
 	# Call to pre-start game with the spawn points.
 	for p in players:
-		rpc_id(p, "pre_start_game", spawn_points)
-
-	pre_start_game(spawn_points)
+		rpc_id(p, "pre_start_game")
+	
+	print ("begin_game")
+	pre_start_game()
 
 
 func end_game():
