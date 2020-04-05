@@ -151,7 +151,7 @@ func join_game(ip, new_player_name):
 	var client = WebSocketClient.new();
 	# var url = "ws://" + ip + ":" + str(DEFAULT_PORT) # You use "ws://" at the beginning of the address for WebSocket connections
 	var url = "ws://" + ip
-	print("join_game " + str(url))
+	print("meow join_game " + str(url))
 	var error = client.connect_to_url(url, PoolStringArray(), true);
 	get_tree().set_network_peer(client);
 
