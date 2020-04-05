@@ -80,6 +80,9 @@ margin_bottom = 54.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
 text = "The Warrior"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="IPLabel" type="Label" parent="Connect"]
 margin_left = 15.0
@@ -97,7 +100,7 @@ margin_right = 173.0
 margin_bottom = 109.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
-text = "127.0.0.1"
+text = "127.0.0.1:10567"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -120,6 +123,9 @@ margin_top = 88.0
 margin_right = 244.906
 margin_bottom = 87.96
 text = "Join"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="ErrorDialog" type="AcceptDialog" parent="."]
 margin_right = 55.0

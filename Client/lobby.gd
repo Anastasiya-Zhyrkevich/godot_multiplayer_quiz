@@ -35,7 +35,6 @@ func _on_join_pressed():
 	var ip = $Connect/IPAddress.text
 
 	$Connect/ErrorLabel.text = ""
-	$Connect/Host.disabled = true
 	$Connect/Join.disabled = true
 
 	var player_name = $Connect/Name.text
@@ -48,7 +47,6 @@ func _on_connection_success():
 
 
 func _on_connection_failed():
-	$Connect/Host.disabled = false
 	$Connect/Join.disabled = false
 	$Connect/ErrorLabel.set_text("Connection failed.")
 
@@ -57,14 +55,12 @@ func _on_game_ended():
 	show()
 	$Connect.show()
 	$Players.hide()
-	$Connect/Host.disabled = false
 	$Connect/Join.disabled = false
 
 
 func _on_game_error(errtxt):
 	$ErrorDialog.dialog_text = errtxt
 	$ErrorDialog.popup_centered_minsize()
-	$Connect/Host.disabled = false
 	$Connect/Join.disabled = false
 
 

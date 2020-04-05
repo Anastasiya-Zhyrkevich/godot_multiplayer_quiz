@@ -161,6 +161,7 @@ func join_game(ip, new_player_name):
 
 	clients[player_name] = client
 
+
 func get_player_list():
 	return players.values()
 
@@ -170,6 +171,7 @@ func get_player_name():
 
 
 func begin_game():
+	
 	assert(get_tree().is_network_server())
 
 	# Create a dictionary with peer id and respective spawn points, could be improved by randomizing.
