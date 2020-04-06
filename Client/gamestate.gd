@@ -20,6 +20,9 @@ var clients = {}
 
 # From server comes
 var tasks = []
+var players_to_answer_given = {}
+
+var Constants = preload("res://constants.gd")
 
 
 # Signals to let lobby GUI know what's going on.
@@ -87,10 +90,10 @@ func unregister_player(id):
 	emit_signal("player_list_changed")
 
 
-remote func pre_start_game(tasks):
+remote func pre_start_game(tasks, answers_given):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
-	world.set_tasks(tasks)
+	world.set_tasks(tasks, answers_given)
 	print ("set_tasks is done")
 	get_tree().get_root().add_child(world)
 	
@@ -181,11 +184,11 @@ func begin_game():
 	
 	rpc_id(server_id, "request_start_game")
 
-
+	
 remote func request_start_game():
 	print("request_start_game")
 	var requested_id = get_tree().get_rpc_sender_id()
-	rpc_id(requested_id, "pre_start_game", tasks)
+	rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[requested_id])
 
 
 func end_game():

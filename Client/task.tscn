@@ -17,10 +17,10 @@ __meta__ = {
 }
 
 [node name="Description" type="Label" parent="Background"]
-margin_left = 83.0
-margin_top = 63.0
-margin_right = 931.0
-margin_bottom = 355.0
+margin_left = 6.0
+margin_top = 34.0
+margin_right = 775.0
+margin_bottom = 326.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -37,9 +37,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Button" type="Button" parent="Background/GridContainer"]
-margin_right = 340.0
-margin_bottom = 186.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-text = "meow"
+[node name="Label" type="Label" parent="Background"]
+margin_left = 826.433
+margin_top = 35.8749
+margin_right = 1020.43
+margin_bottom = 312.875

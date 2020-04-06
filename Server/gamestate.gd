@@ -20,7 +20,12 @@ var clients = {}
 
 var TASKS_PATH = 'res://tasks.json'
 var tasks = []
+# player_name: [answers] for reconnection possible
 var players_to_answer_given = {}
+
+var current_round = 0
+
+var Constants = preload("res://constants.gd")
 
 
 # Signals to let lobby GUI know what's going on.
@@ -105,10 +110,10 @@ func read_tasks():
 	file.close()
 
 
-remote func pre_start_game(tasks):
+remote func pre_start_game(tasks, answers_given):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
-	world.set_tasks(tasks)
+	world.set_tasks(tasks, answers_given)
 	get_tree().get_root().add_child(world)
 
 	get_tree().get_root().get_node("Lobby").hide()
@@ -204,7 +209,21 @@ func begin_game():
 remote func request_start_game():
 	print("request_start_game")
 	var requested_id = get_tree().get_rpc_sender_id()
-	rpc_id(requested_id, "pre_start_game", tasks)
+	var player_name = players[requested_id]
+	
+	if players_to_answer_given.has(player_name) == false:
+		var answers_given = []
+		for i in range(tasks.size()):
+			answers_given.append(Constants.DISABLED_TASK)
+
+		# First round
+		for i in range(Constants.TASKS_PER_ROUND):
+			answers_given[i] = Constants.NO_ANSWER_TASK
+			
+		players_to_answer_given[player_name] = answers_given
+	
+	print("answers_given " + str(players_to_answer_given[player_name]))
+	rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name])
 	
 
 func end_game():
