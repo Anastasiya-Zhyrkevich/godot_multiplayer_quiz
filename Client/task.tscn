@@ -29,9 +29,17 @@ __meta__ = {
 margin_top = 404.0
 margin_right = 1022.0
 margin_bottom = 590.0
-size_flags_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme = SubResource( 1 )
 columns = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Button" type="Button" parent="Background/GridContainer"]
+margin_right = 340.0
+margin_bottom = 186.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "meow"
