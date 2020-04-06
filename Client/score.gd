@@ -5,18 +5,18 @@ var player_labels = {}
 func _process(_delta):
 	pass
 
-
-sync func increase_score(for_who):
+# for_who -- by player_name
+func increase_score(for_who, delta):
 	assert(for_who in player_labels)
 	var pl = player_labels[for_who]
-	pl.score += 1
+	pl.score += delta
 	pl.label.set_text(pl.name + "\n" + str(pl.score))
 
 
-func add_player(id, new_player_name):
+func add_player(new_player_name, score):
 	var l = Label.new()
 	l.set_align(Label.ALIGN_CENTER)
-	l.set_text(new_player_name + "\n" + "0")
+	l.set_text(new_player_name + "\n" + str(score))
 	l.set_h_size_flags(SIZE_EXPAND_FILL)
 	var font = DynamicFont.new()
 	font.set_size(18)
@@ -24,14 +24,17 @@ func add_player(id, new_player_name):
 	l.add_font_override("font", font)
 	add_child(l)
 
-	player_labels[id] = { name = new_player_name, label = l, score = 0 }
+	player_labels[new_player_name] = { name = new_player_name, label = l, score = score }
 
 
 func _ready():
 	$"../Winner".hide()
 	set_process(true)
-	
-	
+
+
+func clear_children_nodes():
+	for i in range(0, get_child_count()):
+		get_child(i).queue_free()
 
 
 func _on_exit_game_pressed():

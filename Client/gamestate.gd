@@ -42,13 +42,7 @@ func _player_connected(id):
 
 # Callback from SceneTree.
 func _player_disconnected(id):
-	if has_node("/root/World"): # Game is in progress.
-		if get_tree().is_network_server():
-			emit_signal("game_error", "Player " + players[id] + " disconnected")
-			end_game()
-	else: # Game is not in progress.
-		# Unregister this player.
-		unregister_player(id)
+	unregister_player(id)
 
 
 # Callback from SceneTree, only for clients (not server).
@@ -84,13 +78,30 @@ remote func register_server_id(server_player_name):
 	server_id = id
 
 
-
 func unregister_player(id):
 	players.erase(id)
 	emit_signal("player_list_changed")
 
 
-remote func pre_start_game(tasks, answers_given):
+remote func _update_world_scores(scores):
+	if not has_node("/root/World"):
+		return 
+	var world = get_tree().get_root().get_node("World") 
+	world.get_node("Score").clear_children_nodes()
+	
+	print("_update_world_scores " + str(players))
+	for pn in scores:
+		world.get_node("Score").add_player(pn, scores[pn])
+
+
+remote func _update_user_scores(for_who, delta):
+	if not has_node("/root/World"):
+		return 
+	var world = get_tree().get_root().get_node("World") 
+	world.get_node("Score").increase_score(for_who, delta)
+
+
+remote func pre_start_game(tasks, answers_given, scores):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
 	world.set_tasks(tasks, answers_given)
@@ -99,16 +110,11 @@ remote func pre_start_game(tasks, answers_given):
 	get_tree().get_root().add_child(world)
 	
 	get_tree().get_root().get_node("Lobby").hide()
-
-	var player_scene = load("res://player.tscn")
-	
-	
-	return 
 	
 	# Set up score.
-	world.get_node("Score").add_player(get_tree().get_network_unique_id(), player_name)
-	for pn in players:
-		world.get_node("Score").add_player(pn, players[pn])
+	_update_world_scores(scores)
+	
+	return
 
 	if not get_tree().is_network_server():
 		# Tell server we are ready to start.
@@ -119,6 +125,7 @@ remote func pre_start_game(tasks, answers_given):
 
 func update_user_answer_given(task_ind, answer_given):
 	rpc_id(server_id, "_update_server_user_answer_given", task_ind, answer_given)
+
 
 remote func _update_server_user_answer_given(task_ind, answer_given):
 	var requested_id = get_tree().get_rpc_sender_id()
@@ -163,6 +170,7 @@ func join_game(ip, new_player_name):
 
 	clients[player_name] = client
 	print(str(error))
+
 
 func get_player_list():
 	return players.values()

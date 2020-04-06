@@ -13,6 +13,8 @@ var player_name = "The Warrior"
 var players = {}
 var players_ready = []
 
+var scores = {}  # player: score, all possible players
+
 var server_id = 0
 
 var servers = {}
@@ -48,13 +50,7 @@ func _player_connected(id):
 
 # Callback from SceneTree.
 func _player_disconnected(id):
-	if has_node("/root/World"): # Game is in progress.
-		if get_tree().is_network_server():
-			emit_signal("game_error", "Player " + players[id] + " disconnected")
-			end_game()
-	else: # Game is not in progress.
-		# Unregister this player.
-		unregister_player(id)
+	unregister_player(id)
 
 
 # Callback from SceneTree, only for clients (not server).
@@ -81,7 +77,25 @@ remote func register_player(new_player_name):
 	var id = get_tree().get_rpc_sender_id()
 	print("register_player " + str(id))
 	players[id] = new_player_name
+	
+	if not scores.has(new_player_name):
+		scores[new_player_name] = 0
+		
+	_send_all_scores()
+			
 	emit_signal("player_list_changed")
+
+
+func _send_all_scores():
+	for player_id in players:
+		print ("request update " + str(player_id) + str(scores))
+		rpc_id(player_id, "_update_world_scores", scores)
+
+
+func _send_partial_scores(for_who, delta):
+	for player_id in players:
+		print ("request update " + str(player_id) + str(scores))
+		rpc_id(player_id, "_update_user_scores", for_who, delta)
 
 
 remote func register_server_id(server_player_name):
@@ -110,7 +124,7 @@ func read_tasks():
 	file.close()
 
 
-remote func pre_start_game(tasks, answers_given):
+remote func pre_start_game(tasks, answers_given, scores):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
 	world.set_tasks(tasks, answers_given)
@@ -223,7 +237,7 @@ remote func request_start_game():
 		players_to_answer_given[player_name] = answers_given
 	
 	print("answers_given " + str(players_to_answer_given[player_name]))
-	rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name])
+	rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name], scores)
 
 
 func update_user_answer_given(task_ind, answer_given):
@@ -235,6 +249,11 @@ remote func _update_server_user_answer_given(task_ind, answer_given):
 	var player_name = players[requested_id]
 	
 	players_to_answer_given[player_name][task_ind] = answer_given
+	
+	if tasks[task_ind].correct == answer_given:
+		scores[player_name] += tasks[task_ind].score
+		
+		_send_partial_scores(player_name, tasks[task_ind].score)
 	
 	
 func end_game():
