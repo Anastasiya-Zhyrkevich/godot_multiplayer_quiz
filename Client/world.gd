@@ -1,58 +1,40 @@
 extends Node2D
 
-var path = 'res://tasks.json'
-
 const TASK_NODE = preload("res://task.tscn")
-
-signal tasks_missing()
-
-var tasks = []
 
 var tasks_per_round = 3
 
+var TASK_TEXTURE = load("res://s_task.png")
+var TASK_DISABLED_TEXTURE = load("res://s_task_disabled.png")
+var TASK_CORRECT_TEXTURE = load("res://s_task_correct.png")
+var TASK_WRONG_TEXTURE = load("res://s_task_wrong.png")
+
 func _ready():
 	print("_ready")
-	var file = File.new()
 	
-	if not file.file_exists(path):
-		emit_signal("tasks_missing")
-		print("tasks_missing")
-		return
+func set_tasks(tasks):
+	print ("set_tasks1")
 	
-	file.open(path, File.READ)
-	var text = file.get_as_text()
-	tasks = parse_json(text)
-	file.close()
-	
-	var window_size = get_viewport().size
-	
-	var spot_size = (window_size.x / tasks_per_round)
-	var button_size_span_percent = 0.8
-	var button_size = button_size_span_percent * spot_size
-	var button_span = 0.5 * (1 - button_size_span_percent) * spot_size
-	
+	get_node("MarginContainer/ScrollContainer/GridContainer").set_columns(tasks_per_round)
+		
+	print("set_tasks2")
 	var task_ind = 0
 	for task in tasks:
 		task.answer_given = -1
 		
-		var X = (task_ind % tasks_per_round) * spot_size
-		var Y = (task_ind / tasks_per_round) * spot_size
-		
-		var button = Button.new()
-		button.set_position(Vector2(X + button_span, Y + button_size))
-		button.set_size(Vector2(button_size, button_size))
-		button.text = "Button"
-		button.show()
+		var button = TextureButton.new()
+		button.texture_normal = TASK_TEXTURE
+		button.texture_disabled = TASK_DISABLED_TEXTURE
 		
 		button.connect("pressed", self, "_task_open_button_pressed", [task])
-		add_child(button)
+		get_node("MarginContainer/ScrollContainer/GridContainer").add_child(button)
 		
 		task_ind += 1
+		
+		print("set_tasks3")
 	
 func _task_open_button_pressed(task):
 	var task_node = TASK_NODE.instance()
 	add_child(task_node)
 	
 	task_node.init_task_node(task)
-
-	

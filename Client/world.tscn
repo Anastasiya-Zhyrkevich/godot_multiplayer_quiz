@@ -57,4 +57,19 @@ __meta__ = {
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2( 512, 300 )
 current = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_top = 184.0
+margin_right = 1023.0
+margin_bottom = 602.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+margin_right = 1023.0
+margin_bottom = 418.0
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/ScrollContainer"]
+columns = 2
 [connection signal="pressed" from="Winner/ExitGame" to="Score" method="_on_exit_game_pressed"]

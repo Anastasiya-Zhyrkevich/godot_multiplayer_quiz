@@ -18,6 +18,9 @@ var server_id = 0
 var servers = {}
 var clients = {}
 
+# From server comes
+var tasks = []
+
 
 # Signals to let lobby GUI know what's going on.
 signal player_list_changed()
@@ -84,9 +87,11 @@ func unregister_player(id):
 	emit_signal("player_list_changed")
 
 
-remote func pre_start_game():
+remote func pre_start_game(tasks):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
+	world.set_tasks(tasks)
+	print ("set_tasks is done")
 	get_tree().get_root().add_child(world)
 	
 	get_tree().get_root().get_node("Lobby").hide()
@@ -110,7 +115,9 @@ remote func pre_start_game():
 			player.set_player_name(players[p_id])
 
 		world.get_node("Players").add_child(player)
-
+	
+	return 
+	
 	# Set up score.
 	world.get_node("Score").add_player(get_tree().get_network_unique_id(), player_name)
 	for pn in players:
@@ -169,13 +176,16 @@ func get_player_name():
 
 
 func begin_game():
-	# Local run
 	assert(get_tree().is_network_server())
-	print(players)
+	print ("begin_game")
 	
-	
-	
-	pre_start_game()
+	rpc_id(server_id, "request_start_game")
+
+
+remote func request_start_game():
+	print("request_start_game")
+	var requested_id = get_tree().get_rpc_sender_id()
+	rpc_id(requested_id, "pre_start_game", tasks)
 
 
 func end_game():

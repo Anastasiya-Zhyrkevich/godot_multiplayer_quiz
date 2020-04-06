@@ -2,14 +2,14 @@ extends Node2D
 
 const TASK_NODE = preload("res://task.tscn")
 
-var tasks = []
-
 var tasks_per_round = 3
 
 func _ready():
 	print("_ready")
 	
-	var window_size = get_viewport().size
+func set_tasks(tasks):
+	print ("set_tasks")
+	var window_size = get_tree().root.get_visible_rect().size
 	
 	var spot_size = (window_size.x / tasks_per_round)
 	var button_size_span_percent = 0.8

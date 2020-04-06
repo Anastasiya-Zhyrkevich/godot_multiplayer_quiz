@@ -105,9 +105,10 @@ func read_tasks():
 	file.close()
 
 
-remote func pre_start_game():
+remote func pre_start_game(tasks):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
+	world.set_tasks(tasks)
 	get_tree().get_root().add_child(world)
 
 	get_tree().get_root().get_node("Lobby").hide()
@@ -194,12 +195,17 @@ func get_player_name():
 
 
 func begin_game():
-	
 	assert(get_tree().is_network_server())
-	
 	print ("begin_game")
-	pre_start_game()
+	
+	rpc_id(server_id, "request_start_game")
 
+
+remote func request_start_game():
+	print("request_start_game")
+	var requested_id = get_tree().get_rpc_sender_id()
+	rpc_id(requested_id, "pre_start_game", tasks)
+	
 
 func end_game():
 	if has_node("/root/World"): # Game is in progress.
