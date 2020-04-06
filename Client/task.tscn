@@ -37,8 +37,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="Background"]
+[node name="CorrectAnswer" type="Label" parent="Background"]
 margin_left = 826.433
 margin_top = 35.8749
 margin_right = 1020.43
 margin_bottom = 312.875
+__meta__ = {
+"_edit_use_anchors_": false
+}

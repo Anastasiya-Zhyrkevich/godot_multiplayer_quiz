@@ -9,6 +9,7 @@ var button_styles = []
 func _ready():
 	get_node("Background/Description").text = ""
 	_set_font(get_node("Background/Description"), 18)
+	_set_font(get_node("Background/CorrectAnswer"), 18)
 	
 	button_styles = []
 
@@ -21,17 +22,17 @@ func _set_font(node, font_size):
 
 
 func _disable_answers():
-	var children = get_children()
-	for i in range(children.size() - 1):
-		children[i].disable = true
+	var children_cnt = get_node("Background/GridContainer").get_child_count() 
+	for i in range(children_cnt - 1):
+		get_node("Background/GridContainer").get_child(i).disabled = true
 
 
-func _make_choice_pressed(answer_given, correct):
+func _make_choice_pressed(answer_given, correct, correct_answer_text):
 	print("_make_choice_pressed")
 	
 	_update_button_color(answer_given, correct)
 	_disable_answers()
-	
+	get_node("Background/CorrectAnswer").text = "Correct answer: " + str(correct_answer_text)
 	emit_signal("answer_is_given", answer_given == correct, answer_given)
 
 	
@@ -76,7 +77,6 @@ func _set_answers(answers, correct, answer_given):
 	get_node("Background/GridContainer").set_columns(answers.size() + 1)
 	
 	for i in range(answers.size()):
-				
 		var ans_button = Button.new()
 		ans_button.text = answers[i]
 		_set_font(ans_button, 18)
@@ -84,14 +84,15 @@ func _set_answers(answers, correct, answer_given):
 		ans_button.connect("pressed", 
 						   self, 
 						   "_make_choice_pressed", 
-						   [i, correct])	
+						   [i, correct, answers[correct]])	
 		
 		if answer_given != -1:
 			ans_button.disabled	 = true
 		
 		var box = StyleBoxFlat.new()
 		box.bg_color = _get_answer_color(i, answer_given, correct)
-		ans_button.set('custom_styles/normal', box)		
+		ans_button.set('custom_styles/normal', box)	
+		ans_button.set('custom_styles/disabled', box)	
 		button_styles.append(box)	
 		
 		ans_button.set_v_size_flags(Control.SIZE_EXPAND_FILL)
