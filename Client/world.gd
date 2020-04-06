@@ -34,13 +34,15 @@ func set_tasks(tasks, server_answers_given):
 		button.connect("pressed", 
 			self, 
 			"_task_open_button_pressed", 
-			[i, tasks[i], answers_given[i]]
+			[i, tasks[i]]
 		)
 		
 		get_node("MarginContainer/ScrollContainer/GridContainer").add_child(button)
 
 
-func _task_open_button_pressed(task_ind, task, answer_given):
+func _task_open_button_pressed(task_ind, task):
+	# Every time different value
+	var answer_given = answers_given[task_ind]
 	var task_node = TASK_NODE.instance()
 	add_child(task_node)
 	
@@ -49,8 +51,9 @@ func _task_open_button_pressed(task_ind, task, answer_given):
 
 
 func _task_answer_is_given(task_ind, is_answer_correct, answer_given):
-	
+	print("_task_answer_is_given " + str(answers_given))
 	answers_given[task_ind] = answer_given
+	print("_task_answer_is_given " + str(answers_given))
 	if is_answer_correct:
 		_update_task_style(
 			get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
@@ -85,4 +88,9 @@ func _get_style(answer_given, correct):
 	
 	return "wrong"
 
-# TODO: add function for updating round
+remote func _update_task_status(task_ind, answer_given, correct):
+	answers_given[task_ind] = answer_given
+	_update_task_style(
+		get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
+		 _get_style(answer_given, correct)
+	)

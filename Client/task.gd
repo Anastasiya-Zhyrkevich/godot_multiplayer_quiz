@@ -86,8 +86,9 @@ func _set_answers(task_ind, answers, correct, answer_given):
 						   "_make_choice_pressed", 
 						   [task_ind, i, correct, answers[correct]])	
 		
-		if answer_given != -1:
+		if answer_given != Constants.NO_ANSWER_TASK:
 			ans_button.disabled	 = true
+			get_node("Background/CorrectAnswer").text = "Correct answer: " + str(answers[correct])
 		
 		var box = StyleBoxFlat.new()
 		box.bg_color = _get_answer_color(i, answer_given, correct)
@@ -104,5 +105,6 @@ func _set_answers(task_ind, answers, correct, answer_given):
 
 
 func init_task_node(task_ind, task, answer_given):
+	print("init_task_node " + str(answer_given))
 	_set_description(task.description)
 	_set_answers(task_ind, task.answers, task.correct, answer_given)
