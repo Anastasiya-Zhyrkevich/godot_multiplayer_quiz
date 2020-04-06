@@ -12,6 +12,8 @@ var TASK_WRONG_TEXTURE = load("res://s_task_wrong.png")
 var Constants = preload("res://constants.gd")
 var answers_given = []
 
+signal user_answer_is_given(task_ind, answer_given)
+
 
 func _ready():
 	print("_ready")
@@ -64,6 +66,7 @@ func _task_answer_is_given(task_ind, is_answer_correct, answer_given):
 			get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
 			"wrong"
 		)
+	gamestate.update_user_answer_given(task_ind, answer_given)
 
 
 func _update_task_style(node, style_param):
@@ -88,7 +91,7 @@ func _get_style(answer_given, correct):
 	
 	return "wrong"
 
-remote func _update_task_status(task_ind, answer_given, correct):
+func _update_task_status(task_ind, answer_given, correct):
 	answers_given[task_ind] = answer_given
 	_update_task_style(
 		get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 

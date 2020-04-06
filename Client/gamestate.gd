@@ -94,30 +94,14 @@ remote func pre_start_game(tasks, answers_given):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
 	world.set_tasks(tasks, answers_given)
+
 	print ("set_tasks is done")
 	get_tree().get_root().add_child(world)
 	
 	get_tree().get_root().get_node("Lobby").hide()
 
 	var player_scene = load("res://player.tscn")
-
-	var spawn_points = {}
-	for p_id in spawn_points:
-		var spawn_pos = world.get_node("SpawnPoints/" + str(spawn_points[p_id])).position
-		var player = player_scene.instance()
-
-		player.set_name(str(p_id)) # Use unique ID as node name.
-		player.position=spawn_pos
-		player.set_network_master(p_id) #set unique id as master.
-
-		if p_id == get_tree().get_network_unique_id():
-			# If node for this peer id, set name.
-			player.set_player_name(player_name)
-		else:
-			# Otherwise set name from peer.
-			player.set_player_name(players[p_id])
-
-		world.get_node("Players").add_child(player)
+	
 	
 	return 
 	
@@ -131,6 +115,16 @@ remote func pre_start_game(tasks, answers_given):
 		rpc_id(1, "ready_to_start", get_tree().get_network_unique_id())
 	elif players.size() == 0:
 		post_start_game()
+
+
+func update_user_answer_given(task_ind, answer_given):
+	rpc_id(server_id, "_update_server_user_answer_given", task_ind, answer_given)
+
+remote func _update_server_user_answer_given(task_ind, answer_given):
+	var requested_id = get_tree().get_rpc_sender_id()
+	var player_name = players[requested_id]
+	
+	players_to_answer_given[player_name][task_ind] = answer_given
 
 
 remote func post_start_game():

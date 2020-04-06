@@ -224,8 +224,19 @@ remote func request_start_game():
 	
 	print("answers_given " + str(players_to_answer_given[player_name]))
 	rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name])
-	
 
+
+func update_user_answer_given(task_ind, answer_given):
+	rpc_id(server_id, "_update_server_user_answer_given", task_ind, answer_given)
+
+
+remote func _update_server_user_answer_given(task_ind, answer_given):
+	var requested_id = get_tree().get_rpc_sender_id()
+	var player_name = players[requested_id]
+	
+	players_to_answer_given[player_name][task_ind] = answer_given
+	
+	
 func end_game():
 	if has_node("/root/World"): # Game is in progress.
 		# End it
