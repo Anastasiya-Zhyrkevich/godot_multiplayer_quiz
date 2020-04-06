@@ -1,6 +1,6 @@
 extends Node2D
 
-signal answer_is_given(what)
+signal answer_is_given(task_ind, is_answer_correct, answer_given)
 
 var Constants = preload("res://constants.gd")
 
@@ -27,13 +27,13 @@ func _disable_answers():
 		get_node("Background/GridContainer").get_child(i).disabled = true
 
 
-func _make_choice_pressed(answer_given, correct, correct_answer_text):
+func _make_choice_pressed(task_ind, answer_given, correct, correct_answer_text):
 	print("_make_choice_pressed")
 	
 	_update_button_color(answer_given, correct)
 	_disable_answers()
 	get_node("Background/CorrectAnswer").text = "Correct answer: " + str(correct_answer_text)
-	emit_signal("answer_is_given", answer_given == correct, answer_given)
+	emit_signal("answer_is_given", task_ind, answer_given == correct, answer_given)
 
 	
 func _close_task():
@@ -72,7 +72,7 @@ func _update_button_color(answer_given, correct):
 	box.bg_color = _get_answer_color(answer_given, answer_given, correct)
 
 
-func _set_answers(answers, correct, answer_given):
+func _set_answers(task_ind, answers, correct, answer_given):
 	button_styles.clear()
 	get_node("Background/GridContainer").set_columns(answers.size() + 1)
 	
@@ -84,7 +84,7 @@ func _set_answers(answers, correct, answer_given):
 		ans_button.connect("pressed", 
 						   self, 
 						   "_make_choice_pressed", 
-						   [i, correct, answers[correct]])	
+						   [task_ind, i, correct, answers[correct]])	
 		
 		if answer_given != -1:
 			ans_button.disabled	 = true
@@ -103,6 +103,6 @@ func _set_answers(answers, correct, answer_given):
 	_add_closing_button()	
 
 
-func init_task_node(task, answer_given):
+func init_task_node(task_ind, task, answer_given):
 	_set_description(task.description)
-	_set_answers(task.answers, task.correct, answer_given)
+	_set_answers(task_ind, task.answers, task.correct, answer_given)
