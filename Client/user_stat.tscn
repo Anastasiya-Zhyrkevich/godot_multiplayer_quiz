@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://user_stat.gd" type="Script" id=1]
+[ext_resource path="res://montserrat.otf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=1]
+size = 20
+font_data = ExtResource( 2 )
+
+[node name="Control" type="Control"]
+margin_right = 91.0
+margin_bottom = 106.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Area" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="Area"]
+margin_right = 88.0
+margin_bottom = 100.0
+custom_fonts/font = SubResource( 1 )
+text = "Hello"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="Area"]
+margin_left = 118.0
+margin_top = 1.0
+margin_right = 1025.0
+margin_bottom = 103.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}

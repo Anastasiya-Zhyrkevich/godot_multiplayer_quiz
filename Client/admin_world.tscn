@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://admin_world.gd" type="Script" id=1]
+[ext_resource path="res://score.gd" type="Script" id=2]
+
+[node name="World" type="Node2D"]
+script = ExtResource( 1 )
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+margin_top = 96.0
+margin_right = 1028.0
+margin_bottom = 595.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+margin_right = 1028.0
+margin_bottom = 499.0
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/ScrollContainer"]
+margin_right = 1028.0
+margin_bottom = 499.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Score" type="HBoxContainer" parent="."]
+margin_right = 1025.0
+margin_bottom = 90.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

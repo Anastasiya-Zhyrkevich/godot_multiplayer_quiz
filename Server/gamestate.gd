@@ -29,6 +29,8 @@ var current_round = 0
 
 var Constants = preload("res://constants.gd")
 
+var ADMIN_PLAYER_NAME = "Teacher"
+var ADMIN_ID = -1
 
 # Signals to let lobby GUI know what's going on.
 signal player_list_changed()
@@ -51,6 +53,9 @@ func _player_connected(id):
 # Callback from SceneTree.
 func _player_disconnected(id):
 	unregister_player(id)
+	
+	if ADMIN_ID == id:
+		ADMIN_ID = -1
 
 
 # Callback from SceneTree, only for clients (not server).
@@ -237,7 +242,18 @@ remote func request_start_game():
 		players_to_answer_given[player_name] = answers_given
 	
 	print("answers_given " + str(players_to_answer_given[player_name]))
-	rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name], scores)
+	if player_name == ADMIN_PLAYER_NAME:
+		var correct = []
+		for task in tasks:
+			correct.append(task.correct)		
+		print("admin_pre_start_game")
+		rpc_id(requested_id, "admin_pre_start_game", correct, players_to_answer_given)
+		ADMIN_ID = requested_id
+	else:
+		rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name], scores)
+		
+		if ADMIN_ID != -1:
+			rpc_id(ADMIN_ID, "admin_add_player", player_name, players_to_answer_given[player_name])
 
 
 func update_user_answer_given(task_ind, answer_given):

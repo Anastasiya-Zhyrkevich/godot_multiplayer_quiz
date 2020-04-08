@@ -113,14 +113,26 @@ remote func pre_start_game(tasks, answers_given, scores):
 	
 	# Set up score.
 	_update_world_scores(scores)
-	
-	return
 
-	if not get_tree().is_network_server():
-		# Tell server we are ready to start.
-		rpc_id(1, "ready_to_start", get_tree().get_network_unique_id())
-	elif players.size() == 0:
-		post_start_game()
+
+remote func admin_pre_start_game(correct, player_to_answers_given):
+	print("admin_pre_start_game")
+	var world = load("res://admin_world.tscn").instance()
+	world.set_players(correct, player_to_answers_given)
+	print("set_players added")
+	
+	get_tree().get_root().add_child(world)
+	print("World added")	
+	get_tree().get_root().get_node("Lobby").hide()
+	print("admin_pre_start_game finish")
+
+
+remote func admin_add_player(player_name, answers_given):
+	if not has_node("/root/World"):
+		return 
+		
+	var world = get_tree().get_root().get_node("World") 
+	world.add_player(player_name, answers_given)
 
 
 func update_user_answer_given(task_ind, answer_given):
