@@ -59,7 +59,7 @@ offset = Vector2( 512, 300 )
 current = true
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-margin_top = 184.0
+margin_top = 107.0
 margin_right = 1023.0
 margin_bottom = 602.0
 __meta__ = {
@@ -68,7 +68,7 @@ __meta__ = {
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
 margin_right = 1023.0
-margin_bottom = 418.0
+margin_bottom = 495.0
 
 [node name="GridContainer" type="GridContainer" parent="MarginContainer/ScrollContainer"]
 columns = 2

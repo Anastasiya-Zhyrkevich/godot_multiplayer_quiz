@@ -234,8 +234,8 @@ remote func request_start_game():
 		for i in range(tasks.size()):
 			answers_given.append(Constants.DISABLED_TASK)
 
-		# First round
-		for i in range(Constants.TASKS_PER_ROUND):
+		# Join late round
+		for i in range(min(current_round * Constants.TASKS_PER_ROUND, tasks.size())):
 			answers_given[i] = Constants.NO_ANSWER_TASK
 			
 		players_to_answer_given[player_name] = answers_given
@@ -255,6 +255,11 @@ remote func request_start_game():
 			rpc_id(ADMIN_ID, "admin_add_player", player_name, players_to_answer_given[player_name])
 
 
+func admin_update_task_status(player_name, task_ind, answer_given):
+	if ADMIN_ID != -1:
+		rpc_id(ADMIN_ID, "update_task_status", player_name, task_ind, answer_given)
+
+
 func update_user_answer_given(task_ind, answer_given):
 	rpc_id(server_id, "_update_server_user_answer_given", task_ind, answer_given)
 
@@ -265,13 +270,34 @@ remote func _update_server_user_answer_given(task_ind, answer_given):
 	
 	players_to_answer_given[player_name][task_ind] = answer_given
 	
-	if ADMIN_ID != -1:
-		rpc_id(ADMIN_ID, "_admin_update_user_answer", player_name, task_ind, answer_given)
+	admin_update_task_status(player_name, task_ind, answer_given)
 	
 	if tasks[task_ind].correct == answer_given:
 		scores[player_name] += tasks[task_ind].score
 		
 		_send_partial_scores(player_name, tasks[task_ind].score)
+	
+	
+remote func request_next_round():
+	var start_ind = current_round * Constants.TASKS_PER_ROUND
+	current_round += 1
+	if start_ind >= tasks.size():
+		return
+	
+	for i in range(start_ind, min(start_ind + Constants.TASKS_PER_ROUND, tasks.size())):
+		for player_id in players:
+			if player_id == ADMIN_ID:
+				continue
+			
+			var player_name = players[player_id]
+			var answer_given = Constants.NO_ANSWER_TASK  # new status
+			players_to_answer_given[player_name][i] = answer_given
+			
+			
+			# Send to admin
+			admin_update_task_status(player_name, i, answer_given)
+			# Send to player
+			rpc_id(player_id, "update_task_status", player_name, i, answer_given)
 	
 	
 func end_game():

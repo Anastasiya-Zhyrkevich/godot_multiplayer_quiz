@@ -101,13 +101,6 @@ remote func _update_user_scores(for_who, delta):
 	world.get_node("Score").increase_score(for_who, delta)
 
 
-remote func _admin_update_user_answer(player_name, task_ind, answer_given):
-	if not has_node("/root/World"):
-		return 
-	var world = get_tree().get_root().get_node("World") 
-	world.update_player_task(player_name, task_ind, answer_given)
-
-
 remote func pre_start_game(tasks, answers_given, scores):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
@@ -126,6 +119,8 @@ remote func admin_pre_start_game(correct, player_to_answers_given, scores):
 	print("admin_pre_start_game")
 	var world = load("res://admin_world.tscn").instance()
 	world.set_players(correct, player_to_answers_given)
+	world.connect("next_round", self, "_send_request_next_round")
+	
 	print("set_players added")
 	
 	get_tree().get_root().add_child(world)
@@ -134,6 +129,10 @@ remote func admin_pre_start_game(correct, player_to_answers_given, scores):
 	print("admin_pre_start_game finish")
 	
 	_update_world_scores(scores)
+
+
+func _send_request_next_round():
+	rpc_id(server_id, "request_next_round")
 
 
 remote func admin_add_player(player_name, answers_given):
@@ -153,6 +152,14 @@ remote func _update_server_user_answer_given(task_ind, answer_given):
 	var player_name = players[requested_id]
 	
 	players_to_answer_given[player_name][task_ind] = answer_given
+
+# For admin player_name makes sense, for player - for info 
+remote func update_task_status(player_name, task_ind, answer_given):
+	if not has_node("/root/World"):
+		return 
+		
+	var world = get_tree().get_root().get_node("World") 
+	world._update_task_status(player_name, task_ind, answer_given)
 
 
 remote func post_start_game():

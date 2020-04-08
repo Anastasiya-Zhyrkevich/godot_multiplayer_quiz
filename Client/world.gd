@@ -72,6 +72,8 @@ func _task_answer_is_given(task_ind, is_answer_correct, answer_given):
 func _update_task_style(node, style_param):
 	node.texture_disabled = TASK_DISABLED_TEXTURE
 	
+	print("_update_task_style " + style_param)
+	
 	if style_param == "no_answer":
 		node.texture_normal = TASK_TEXTURE
 	elif style_param == "correct":
@@ -91,9 +93,12 @@ func _get_style(answer_given, correct):
 	
 	return "wrong"
 
-func _update_task_status(task_ind, answer_given, correct):
+func _update_task_status(player_name, task_ind, answer_given):
+	if answers_given[task_ind] == Constants.DISABLED_TASK and answer_given != Constants.DISABLED_TASK:
+			get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind).disabled = false
+	
 	answers_given[task_ind] = answer_given
 	_update_task_style(
 		get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
-		 _get_style(answer_given, correct)
+		 _get_style(answer_given, 100)  # Random correct number
 	)

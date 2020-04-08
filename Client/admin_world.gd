@@ -9,6 +9,8 @@ const USER_STAT = preload("res://user_stat.tscn")
 const Constants = preload("res://constants.gd")
 
 
+signal next_round()
+
 var player_to_ind = {}
 var current_ind = 0
 var correct = []
@@ -50,7 +52,11 @@ func _add_player(player_name, answers_given):
 	
 	get_node("MarginContainer/ScrollContainer/GridContainer").add_child(user_stat)
 	print("_add_player finish")
-	
+
+
+func _update_task_status(player_name, task_ind, answer_given):
+	update_player_task(player_name, task_ind, answer_given)
+
 	
 func update_player_task(player_name, task_ind, answer_given):
 	var ind = player_to_ind[player_name]
@@ -65,3 +71,7 @@ func update_player(player_name, answers_given):
 	
 	for i in range(answers_given.size()):
 		get_node("MarginContainer/ScrollContainer/GridContainer").get_child(ind).update_answer_given(i, answers_given[i])
+
+
+func _on_NextRound_pressed():
+	emit_signal("next_round")

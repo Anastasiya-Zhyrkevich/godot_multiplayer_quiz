@@ -41,3 +41,4 @@ text = "Next Round"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="pressed" from="NextRound" to="." method="_on_NextRound_pressed"]
