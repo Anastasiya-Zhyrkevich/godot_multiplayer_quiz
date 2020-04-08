@@ -283,23 +283,37 @@ remote func request_next_round():
 	current_round += 1
 	if start_ind >= tasks.size():
 		return
+		
+	var answer_given = Constants.NO_ANSWER_TASK  # new status
 	
-	for i in range(start_ind, min(start_ind + Constants.TASKS_PER_ROUND, tasks.size())):
-		for player_id in players:
+	for player_id in players:
+		for i in range(start_ind, min(start_ind + Constants.TASKS_PER_ROUND, tasks.size())):
 			if player_id == ADMIN_ID:
 				continue
 			
 			var player_name = players[player_id]
-			var answer_given = Constants.NO_ANSWER_TASK  # new status
 			players_to_answer_given[player_name][i] = answer_given
-			
 			
 			# Send to admin
 			admin_update_task_status(player_name, i, answer_given)
 			# Send to player
 			rpc_id(player_id, "update_task_status", player_name, i, answer_given)
 	
-	
+	# Update unconnected
+	for player_name in players_to_answer_given:
+		if players_to_answer_given[player_name][start_ind] == Constants.NO_ANSWER_TASK:
+			continue
+		
+		if player_name == Constants.ADMIN_PLAYER_NAME:
+			continue
+		
+		for i in range(start_ind, min(start_ind + Constants.TASKS_PER_ROUND, tasks.size())):
+			players_to_answer_given[player_name][i] = answer_given
+			
+			# Send to admin
+			admin_update_task_status(player_name, i, answer_given)
+			
+			
 func end_game():
 	if has_node("/root/World"): # Game is in progress.
 		# End it
