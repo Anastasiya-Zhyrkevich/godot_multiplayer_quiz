@@ -29,6 +29,8 @@ func _get_label(text):
 	var l = Label.new()
 	l.text = str(text)
 	_set_font(l, 20)
+	l.set_v_size_flags(Control.SIZE_EXPAND_FILL)
+	l.set_h_size_flags(Control.SIZE_EXPAND_FILL)	
 	return 	l
 	
 	

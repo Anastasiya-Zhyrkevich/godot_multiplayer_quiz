@@ -1,6 +1,7 @@
 extends HBoxContainer
 
 var player_labels = {}
+const Constants = preload("res://constants.gd")
 
 func _process(_delta):
 	pass
@@ -14,6 +15,9 @@ func increase_score(for_who, delta):
 
 
 func add_player(new_player_name, score):
+	if new_player_name == Constants.ADMIN_PLAYER_NAME:
+		return
+	
 	var l = Label.new()
 	l.set_align(Label.ALIGN_CENTER)
 	l.set_text(new_player_name + "\n" + str(score))

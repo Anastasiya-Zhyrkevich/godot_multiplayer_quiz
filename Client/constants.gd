@@ -13,6 +13,9 @@ const GREEN = Color(103.0 / 255, 176.0 / 255, 141.0 / 255)
 const RED = Color(246.0 / 255, 90.0 / 255 , 124.0 / 255)
 const GREY = Color(109.0 / 255, 123.0 / 255, 141.0 / 255)
 
+const ADMIN_PLAYER_NAME = "Teacher"
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass # Replace with function body.

@@ -25,9 +25,19 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="Score" type="HBoxContainer" parent="."]
-margin_right = 1025.0
+margin_right = 884.0
 margin_bottom = 90.0
 script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NextRound" type="Button" parent="."]
+margin_left = 913.0
+margin_top = 38.0
+margin_right = 1024.0
+margin_bottom = 106.0
+text = "Next Round"
 __meta__ = {
 "_edit_use_anchors_": false
 }

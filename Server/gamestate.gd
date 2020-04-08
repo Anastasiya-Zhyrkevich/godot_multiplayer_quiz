@@ -29,7 +29,6 @@ var current_round = 0
 
 var Constants = preload("res://constants.gd")
 
-var ADMIN_PLAYER_NAME = "Teacher"
 var ADMIN_ID = -1
 
 # Signals to let lobby GUI know what's going on.
@@ -242,12 +241,12 @@ remote func request_start_game():
 		players_to_answer_given[player_name] = answers_given
 	
 	print("answers_given " + str(players_to_answer_given[player_name]))
-	if player_name == ADMIN_PLAYER_NAME:
+	if player_name == Constants.ADMIN_PLAYER_NAME:
 		var correct = []
 		for task in tasks:
 			correct.append(task.correct)		
 		print("admin_pre_start_game")
-		rpc_id(requested_id, "admin_pre_start_game", correct, players_to_answer_given)
+		rpc_id(requested_id, "admin_pre_start_game", correct, players_to_answer_given, scores)
 		ADMIN_ID = requested_id
 	else:
 		rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name], scores)
@@ -265,6 +264,9 @@ remote func _update_server_user_answer_given(task_ind, answer_given):
 	var player_name = players[requested_id]
 	
 	players_to_answer_given[player_name][task_ind] = answer_given
+	
+	if ADMIN_ID != -1:
+		rpc_id(ADMIN_ID, "_admin_update_user_answer", player_name, task_ind, answer_given)
 	
 	if tasks[task_ind].correct == answer_given:
 		scores[player_name] += tasks[task_ind].score

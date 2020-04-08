@@ -101,6 +101,13 @@ remote func _update_user_scores(for_who, delta):
 	world.get_node("Score").increase_score(for_who, delta)
 
 
+remote func _admin_update_user_answer(player_name, task_ind, answer_given):
+	if not has_node("/root/World"):
+		return 
+	var world = get_tree().get_root().get_node("World") 
+	world.update_player_task(player_name, task_ind, answer_given)
+
+
 remote func pre_start_game(tasks, answers_given, scores):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
@@ -115,7 +122,7 @@ remote func pre_start_game(tasks, answers_given, scores):
 	_update_world_scores(scores)
 
 
-remote func admin_pre_start_game(correct, player_to_answers_given):
+remote func admin_pre_start_game(correct, player_to_answers_given, scores):
 	print("admin_pre_start_game")
 	var world = load("res://admin_world.tscn").instance()
 	world.set_players(correct, player_to_answers_given)
@@ -125,6 +132,8 @@ remote func admin_pre_start_game(correct, player_to_answers_given):
 	print("World added")	
 	get_tree().get_root().get_node("Lobby").hide()
 	print("admin_pre_start_game finish")
+	
+	_update_world_scores(scores)
 
 
 remote func admin_add_player(player_name, answers_given):
