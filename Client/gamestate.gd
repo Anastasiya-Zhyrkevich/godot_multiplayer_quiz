@@ -196,8 +196,13 @@ func join_game(ip, new_player_name):
 	var error = client.connect_to_url(url, PoolStringArray(), true);
 	get_tree().set_network_peer(client);
 
+	client.connect("connection_closed", self, "_handle_closed_connection")
 	clients[player_name] = client
 	print(str(error))
+
+
+func _handle_closed_connection(is_clean_close):
+	print("_handle_closed_connection " + str(is_clean_close))
 
 
 func get_player_list():
