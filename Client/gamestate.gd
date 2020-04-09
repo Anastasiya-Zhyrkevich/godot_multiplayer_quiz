@@ -24,6 +24,8 @@ var players_to_answer_given = {}
 
 var Constants = preload("res://constants.gd")
 
+var timer
+
 
 # Signals to let lobby GUI know what's going on.
 signal player_list_changed()
@@ -194,9 +196,12 @@ func join_game(ip, new_player_name):
 	var url = "ws://" + ip
 	print("meow join_game " + str(url))
 	var error = client.connect_to_url(url, PoolStringArray(), true);
+	client.connect("connection_closed", self, "_handle_closed_connection")
+	
 	get_tree().set_network_peer(client);
 
-	client.connect("connection_closed", self, "_handle_closed_connection")
+	get_tree().connect("connection_closed", self, "_handle_closed_connection")
+	
 	clients[player_name] = client
 	print(str(error))
 
@@ -241,6 +246,15 @@ func _ready():
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
+	
+	timer = Timer.new()
+	timer.set_wait_time(2)
+	timer.autostart = true	
+	timer.connect("timeout", self, "_on_timer_timeout")
+	timer.start()
+	
+	get_tree().add_child(timer)
+
 
 func _process(delta):
 	for s in servers:
@@ -251,3 +265,12 @@ func _process(delta):
 	for c in clients:
 		if (clients[c].get_connection_status() == NetworkedMultiplayerPeer.CONNECTION_CONNECTED || clients[c].get_connection_status() == NetworkedMultiplayerPeer.CONNECTION_CONNECTING):
 			clients[c].poll();
+		else:
+			print("Connection status: " + c + " " + str(clients[c].get_connection_status()))
+
+
+# Need to do for Heroku not closing websocket connection
+func _on_timer_timeout():
+	if server_id != 0:
+		rpc_id(server_id, "ping_server")
+		

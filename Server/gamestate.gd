@@ -341,3 +341,7 @@ func _process(delta):
 	for c in clients:
 		if (clients[c].get_connection_status() == NetworkedMultiplayerPeer.CONNECTION_CONNECTED || clients[c].get_connection_status() == NetworkedMultiplayerPeer.CONNECTION_CONNECTING):
 			clients[c].poll();
+
+remote func ping_server():
+	print("Recieved ping")
+
