@@ -313,7 +313,7 @@ remote func request_next_round():
 			# Send to admin
 			admin_update_task_status(player_name, i, answer_given)
 			
-			
+		
 func end_game():
 	if has_node("/root/World"): # Game is in progress.
 		# End it

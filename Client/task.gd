@@ -17,7 +17,7 @@ func _ready():
 func _set_font(node, font_size):
 	var font = DynamicFont.new()
 	font.set_size(font_size)
-	font.set_font_data(preload("res://montserrat.otf"))	
+	font.set_font_data(preload("res://mintSpirit.otf"))	
 	node.add_font_override("font", font)
 
 
