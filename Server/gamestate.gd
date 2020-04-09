@@ -31,6 +31,10 @@ var Constants = preload("res://constants.gd")
 
 var ADMIN_ID = -1
 
+const PING_TIMEOUT = 10
+var current_ping_time = 0
+
+
 # Signals to let lobby GUI know what's going on.
 signal player_list_changed()
 signal connection_failed()
@@ -341,6 +345,13 @@ func _process(delta):
 	for c in clients:
 		if (clients[c].get_connection_status() == NetworkedMultiplayerPeer.CONNECTION_CONNECTED || clients[c].get_connection_status() == NetworkedMultiplayerPeer.CONNECTION_CONNECTING):
 			clients[c].poll();
+			
+	current_ping_time += delta
+	if current_ping_time > PING_TIMEOUT:
+		current_ping_time = 0
+		for player_id in players:
+			rpc_id(player_id, "ping_server")
+
 
 remote func ping_server():
 	print("Recieved ping")

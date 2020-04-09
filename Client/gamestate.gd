@@ -103,6 +103,15 @@ remote func _update_user_scores(for_who, delta):
 	world.get_node("Score").increase_score(for_who, delta)
 
 
+func _set_ping_timer():
+	timer = Timer.new()
+	timer.set_wait_time(10)
+	timer.autostart = true	
+	get_tree().get_root().add_child(timer)
+	timer.connect("timeout", self, "_on_timer_timeout")
+	timer.start()
+
+
 remote func pre_start_game(tasks, answers_given, scores):
 	# Change scene.
 	var world = load("res://world.tscn").instance()
@@ -115,6 +124,9 @@ remote func pre_start_game(tasks, answers_given, scores):
 	
 	# Set up score.
 	_update_world_scores(scores)
+	
+	# Ping server
+	_set_ping_timer()
 
 
 remote func admin_pre_start_game(correct, player_to_answers_given, scores):
@@ -132,6 +144,9 @@ remote func admin_pre_start_game(correct, player_to_answers_given, scores):
 	
 	_update_world_scores(scores)
 
+	# Ping server
+	_set_ping_timer()
+	
 
 func _send_request_next_round():
 	rpc_id(server_id, "request_next_round")
@@ -246,14 +261,6 @@ func _ready():
 	get_tree().connect("connected_to_server", self, "_connected_ok")
 	get_tree().connect("connection_failed", self, "_connected_fail")
 	get_tree().connect("server_disconnected", self, "_server_disconnected")
-	
-	timer = Timer.new()
-	timer.set_wait_time(2)
-	timer.autostart = true	
-	timer.connect("timeout", self, "_on_timer_timeout")
-	timer.start()
-	
-	get_tree().add_child(timer)
 
 
 func _process(delta):
@@ -271,6 +278,10 @@ func _process(delta):
 
 # Need to do for Heroku not closing websocket connection
 func _on_timer_timeout():
+	print("_on_timer_timeout")
 	if server_id != 0:
 		rpc_id(server_id, "ping_server")
-		
+
+
+remote func ping_server():
+	print("Recieved ping")	
