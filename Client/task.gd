@@ -51,9 +51,16 @@ func _add_closing_button():
 	get_node("Background/GridContainer").add_child(close_button)
 
 
-func _set_description(descr):
+func _set_description(task_ind, descr):
 	get_node("Background/Description").text = descr
 
+	var image = _load_task_image(task_ind, "task")
+	if not image:
+		return
+	var pict = get_node("Background/DescriptionPict")
+	pict.texture = image
+	pict.set_stretch_mode(SceneTree.STRETCH_KEEP_ASPECT_CENTERED)
+	
 
 func _get_answer_color(current_ind, answer_given, correct):
 	if answer_given < 0:
@@ -71,7 +78,6 @@ func _update_button_color(answer_given, correct):
 	var box = button_styles[answer_given]
 	box.bg_color = _get_answer_color(answer_given, answer_given, correct)
 	var button = get_node("Background/GridContainer").get_child(answer_given)
-	print ("_update_button_color")
 	if button is TextureButton:
 		button.modulate = _get_answer_color(answer_given, answer_given, correct)
 		
@@ -135,6 +141,8 @@ func _set_answers(task_ind, answers, correct, answer_given):
 
 		var box = StyleBoxFlat.new()
 		box.bg_color = _get_answer_color(i, answer_given, correct)
+		if answer_given >= 0 and ans_button is TextureButton:
+			ans_button.modulate = _get_answer_color(i, answer_given, correct)
 
 		ans_button.set('custom_styles/normal', box)	
 		ans_button.set('custom_styles/disabled', box)	
@@ -149,5 +157,5 @@ func _set_answers(task_ind, answers, correct, answer_given):
 
 func init_task_node(task_ind, task, answer_given):
 	print("init_task_node " + str(answer_given))
-	_set_description(task.description)
+	_set_description(task_ind, task.description)
 	_set_answers(task_ind, task.answers, task.correct, answer_given)
