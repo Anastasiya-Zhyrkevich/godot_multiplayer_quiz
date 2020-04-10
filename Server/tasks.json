@@ -1,8 +1,8 @@
 [{
-	"id": 1,
+	"id": 0,
 	"score": 3,
 	"description": "My description",
-	"answers": ["10", "20", "30"],
+	"answers": ["asset-0", "asset-1", "asset-2", "asset-3", "asset-4"],
 	"correct": 1
 },
 {

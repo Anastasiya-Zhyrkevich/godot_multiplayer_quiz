@@ -25,7 +25,7 @@ var tasks = []
 # player_name: [answers] for reconnection possible
 var players_to_answer_given = {}
 
-var current_round = 0
+var current_round = 1
 
 var Constants = preload("res://constants.gd")
 

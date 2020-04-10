@@ -25,7 +25,7 @@ func _disable_answers():
 	var children_cnt = get_node("Background/GridContainer").get_child_count() 
 	for i in range(children_cnt - 1):
 		get_node("Background/GridContainer").get_child(i).disabled = true
-
+	
 
 func _make_choice_pressed(task_ind, answer_given, correct, correct_answer_text):
 	print("_make_choice_pressed")
@@ -70,17 +70,48 @@ func _get_answer_color(current_ind, answer_given, correct):
 func _update_button_color(answer_given, correct):
 	var box = button_styles[answer_given]
 	box.bg_color = _get_answer_color(answer_given, answer_given, correct)
+	var button = get_node("Background/GridContainer").get_child(answer_given)
+	print ("_update_button_color")
+	if button is TextureButton:
+		button.modulate = _get_answer_color(answer_given, answer_given, correct)
+		
 
+func _create_text_ans_button(answer_text):
+	var ans_button = Button.new()
+	ans_button.text = answer_text
+	_set_font(ans_button, 18)
+	return ans_button
+
+
+func _create_image_ans_button(task_ind, answer_path):
+	var image_path = "res://tasks/" + str(task_ind) + "/" + answer_path + ".png"
+	print (image_path)
+	
+	var image = load(image_path)
+	var button = TextureButton.new()
+	button.texture_normal = image
+	button.texture_disabled = image	
+	
+	button.expand = true
+	print("stretch mode " + str(SceneTree.STRETCH_KEEP_CENTERED))
+	button.set_stretch_mode(SceneTree.STRETCH_KEEP_CENTERED)
+	return button
+	
+
+func _create_ans_button(task_ind, answer_text):
+	if answer_text.find("asset") != -1:
+		return _create_image_ans_button(task_ind, answer_text)
+	else:
+		return _create_text_ans_button(answer_text)
+
+	
 
 func _set_answers(task_ind, answers, correct, answer_given):
 	button_styles.clear()
 	get_node("Background/GridContainer").set_columns(answers.size() + 1)
 	
 	for i in range(answers.size()):
-		var ans_button = Button.new()
-		ans_button.text = answers[i]
-		_set_font(ans_button, 18)
-		
+		var ans_button = _create_ans_button(task_ind, answers[i])
 		ans_button.connect("pressed", 
 						   self, 
 						   "_make_choice_pressed", 
@@ -89,13 +120,13 @@ func _set_answers(task_ind, answers, correct, answer_given):
 		if answer_given != Constants.NO_ANSWER_TASK:
 			ans_button.disabled	 = true
 			get_node("Background/CorrectAnswer").text = "Correct answer: " + str(answers[correct])
-		
+
 		var box = StyleBoxFlat.new()
 		box.bg_color = _get_answer_color(i, answer_given, correct)
+
 		ans_button.set('custom_styles/normal', box)	
 		ans_button.set('custom_styles/disabled', box)	
 		button_styles.append(box)	
-		
 		ans_button.set_v_size_flags(Control.SIZE_EXPAND_FILL)
 		ans_button.set_h_size_flags(Control.SIZE_EXPAND_FILL)
 	
