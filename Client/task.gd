@@ -32,7 +32,7 @@ func _make_choice_pressed(task_ind, answer_given, correct, correct_answer_text):
 	
 	_update_button_color(answer_given, correct)
 	_disable_answers()
-	get_node("Background/CorrectAnswer").text = "Correct answer: " + str(correct_answer_text)
+	_show_correct_answer(task_ind, correct_answer_text)
 	emit_signal("answer_is_given", task_ind, answer_given == correct, answer_given)
 
 	
@@ -83,11 +83,14 @@ func _create_text_ans_button(answer_text):
 	return ans_button
 
 
-func _create_image_ans_button(task_ind, answer_path):
-	var image_path = "res://tasks/" + str(task_ind) + "/" + answer_path + ".png"
-	print (image_path)
-	
+func _load_task_image(task_ind, path):
+	var image_path = "res://tasks/" + str(task_ind) + "/" + path + ".png"
 	var image = load(image_path)
+	return image
+
+
+func _create_image_ans_button(task_ind, answer_path):
+	var image = _load_task_image(task_ind, answer_path)
 	var button = TextureButton.new()
 	button.texture_normal = image
 	button.texture_disabled = image	
@@ -104,6 +107,15 @@ func _create_ans_button(task_ind, answer_text):
 	else:
 		return _create_text_ans_button(answer_text)
 
+
+func _show_correct_answer(task_ind, answer_text):
+	get_node("Background/CorrectAnswer").text = "Correct answer: "
+	if answer_text.find("asset") == -1:
+		get_node("Background/CorrectAnswer").text += str(answer_text)
+		return
+	
+	var image = _load_task_image(task_ind, answer_text)
+	get_node("Background/CorrectAnswerPict").texture = image
 	
 
 func _set_answers(task_ind, answers, correct, answer_given):
@@ -119,7 +131,7 @@ func _set_answers(task_ind, answers, correct, answer_given):
 		
 		if answer_given != Constants.NO_ANSWER_TASK:
 			ans_button.disabled	 = true
-			get_node("Background/CorrectAnswer").text = "Correct answer: " + str(answers[correct])
+			_show_correct_answer(task_ind, answers[correct])
 
 		var box = StyleBoxFlat.new()
 		box.bg_color = _get_answer_color(i, answer_given, correct)
