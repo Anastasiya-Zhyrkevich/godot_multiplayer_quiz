@@ -34,9 +34,9 @@ __meta__ = {
 
 [node name="NextRound" type="Button" parent="."]
 margin_left = 913.0
-margin_top = 38.0
+margin_top = 4.51678
 margin_right = 1024.0
-margin_bottom = 106.0
+margin_bottom = 72.5168
 text = "Next Round"
 __meta__ = {
 "_edit_use_anchors_": false

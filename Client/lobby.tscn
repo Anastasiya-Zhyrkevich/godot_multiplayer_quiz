@@ -102,7 +102,10 @@ margin_right = 173.0
 margin_bottom = 109.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
-text = "127.0.0.1:10567"
+text = "godot-quiz.herokuapp.com/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="Join" type="Button" parent="Connect"]
 margin_left = 181.0

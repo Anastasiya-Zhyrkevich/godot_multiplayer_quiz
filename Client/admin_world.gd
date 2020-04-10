@@ -41,6 +41,15 @@ func _add_player(player_name, answers_given):
 		update_player(player_name, answers_given)
 		return
 	
+	if current_ind == 0:
+		# Setup header
+		var header_user_stat = USER_STAT.instance()
+		header_user_stat.set_player_name("-")
+		header_user_stat.set_header(correct)
+		get_node("MarginContainer/ScrollContainer/GridContainer").add_child(header_user_stat)
+		current_ind += 1
+		
+	
 	var user_stat = USER_STAT.instance()
 	user_stat.set_player_name(player_name)
 	user_stat.set_answers_given(correct, answers_given)
