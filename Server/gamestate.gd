@@ -24,6 +24,7 @@ var TASKS_PATH = 'res://tasks.json'
 var tasks = []
 # player_name: [answers] for reconnection possible
 var players_to_answer_given = {}
+var players_to_help = {}
 
 var current_round = 1
 
@@ -235,14 +236,18 @@ remote func request_start_game():
 	
 	if players_to_answer_given.has(player_name) == false:
 		var answers_given = []
+		var help = []
 		for i in range(tasks.size()):
 			answers_given.append(Constants.DISABLED_TASK)
+			help.append(false)
 
 		# Join late round
 		for i in range(min(current_round * Constants.TASKS_PER_ROUND, tasks.size())):
 			answers_given[i] = Constants.NO_ANSWER_TASK
 			
 		players_to_answer_given[player_name] = answers_given
+		players_to_help[player_name] = help
+		
 	
 	print("answers_given " + str(players_to_answer_given[player_name]))
 	if player_name == Constants.ADMIN_PLAYER_NAME:
@@ -251,6 +256,12 @@ remote func request_start_game():
 			correct.append(task.correct)		
 		print("admin_pre_start_game")
 		rpc_id(requested_id, "admin_pre_start_game", correct, players_to_answer_given, scores)
+		
+		for player_name in players_to_help:
+			for i in players_to_help[player_name].size():
+				if players_to_help[player_name][i]:
+					rpc_id(requested_id, "admin_help_requested", player_name, i)		
+		
 		ADMIN_ID = requested_id
 	else:
 		rpc_id(requested_id, "pre_start_game", tasks, players_to_answer_given[player_name], scores)
@@ -280,7 +291,16 @@ remote func _update_server_user_answer_given(task_ind, answer_given):
 		scores[player_name] += tasks[task_ind].score
 		
 		_send_partial_scores(player_name, tasks[task_ind].score)
+
+
+remote func _help_requested_from_user(task_ind):
+	var requested_id = get_tree().get_rpc_sender_id()
+	var player_name = players[requested_id]
+	players_to_help[player_name][task_ind] = true
 	
+	if ADMIN_ID != -1:
+		rpc_id(ADMIN_ID, "admin_help_requested", player_name, task_ind)
+
 	
 remote func request_next_round():
 	var start_ind = current_round * Constants.TASKS_PER_ROUND

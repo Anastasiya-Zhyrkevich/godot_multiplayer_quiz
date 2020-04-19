@@ -164,11 +164,30 @@ func update_user_answer_given(task_ind, answer_given):
 	rpc_id(server_id, "_update_server_user_answer_given", task_ind, answer_given)
 
 
+func help_requested(task_ind):
+	rpc_id(server_id, "_help_requested_from_user", task_ind)
+
+
+remote func admin_help_requested(player_name, task_ind):
+	if not has_node("/root/World"):
+		return 
+		
+	var world = get_tree().get_root().get_node("World") 
+	world._update_player_help(player_name, task_ind)
+	
+
 remote func _update_server_user_answer_given(task_ind, answer_given):
 	var requested_id = get_tree().get_rpc_sender_id()
 	var player_name = players[requested_id]
 	
 	players_to_answer_given[player_name][task_ind] = answer_given
+
+
+remote func _help_requested_from_user(task_ind):
+	var requested_id = get_tree().get_rpc_sender_id()
+	var player_name = players[requested_id]
+	# TODO (send to admin)
+
 
 # For admin player_name makes sense, for player - for info 
 remote func update_task_status(player_name, task_ind, answer_given):
@@ -234,9 +253,8 @@ func get_player_name():
 
 
 func begin_game():
-	assert(get_tree().is_network_server())
+	# assert(get_tree().is_network_server())
 	print ("begin_game")
-	
 	rpc_id(server_id, "request_start_game")
 
 	

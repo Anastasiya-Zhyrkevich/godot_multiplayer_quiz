@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://task.gd" type="Script" id=1]
 [ext_resource path="res://mintSpirit.otf" type="DynamicFontData" id=2]
+[ext_resource path="res://hand_reversed.jpg" type="Texture" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 font_data = ExtResource( 2 )
@@ -44,6 +45,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="DescriptionPictLong" type="TextureRect" parent="Background"]
+margin_left = 6.0
+margin_top = 251.0
+margin_right = 1013.0
+margin_bottom = 406.0
+expand = true
+stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="GridContainer" type="GridContainer" parent="Background"]
 margin_top = 404.0
 margin_right = 1022.0
@@ -58,20 +70,34 @@ __meta__ = {
 
 [node name="CorrectAnswer" type="Label" parent="Background"]
 margin_left = 826.0
-margin_top = 36.0
+margin_top = 164.0
 margin_right = 1020.0
-margin_bottom = 137.0
+margin_bottom = 265.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="CorrectAnswerPict" type="TextureRect" parent="Background"]
 margin_left = 852.0
-margin_top = 160.0
+margin_top = 240.0
 margin_right = 1010.0
-margin_bottom = 323.0
+margin_bottom = 403.0
 expand = true
 stretch_mode = 6
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Help" type="TextureButton" parent="Background"]
+margin_left = 817.708
+margin_top = 3.44574
+margin_right = 1023.71
+margin_bottom = 152.446
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+texture_normal = ExtResource( 3 )
+stretch_mode = 5
 __meta__ = {
 "_edit_use_anchors_": false
 }

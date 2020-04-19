@@ -62,6 +62,11 @@ func update_answer_given(task_ind, answer_given):
 	var child_ind = info_rows_cnt * tasks_cnt + task_ind
 	get_node("Area/GridContainer").get_child(child_ind).set_text(answer_given)
 
+func update_player_help(task_ind):
+	var child_ind = info_rows_cnt * tasks_cnt + task_ind
+	get_node("Area/GridContainer").get_child(child_ind).add_color_override("font_color", Color(1,0,0))
+	
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass

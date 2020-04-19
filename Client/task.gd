@@ -1,6 +1,7 @@
 extends Node2D
 
 signal answer_is_given(task_ind, is_answer_correct, answer_given)
+signal need_help(task_ind)
 
 var Constants = preload("res://constants.gd")
 
@@ -51,13 +52,17 @@ func _add_closing_button():
 	get_node("Background/GridContainer").add_child(close_button)
 
 
-func _set_description(task_ind, descr):
+func _set_description(task_ind, task, descr):
 	get_node("Background/Description").text = descr
 
 	var image = _load_task_image(task_ind, "task")
 	if not image:
 		return
 	var pict = get_node("Background/DescriptionPict")
+	
+	if "long" in task and task.long:
+		pict = get_node("Background/DescriptionPictLong")
+	
 	pict.texture = image
 	pict.set_stretch_mode(SceneTree.STRETCH_KEEP_ASPECT_CENTERED)
 	
@@ -155,7 +160,21 @@ func _set_answers(task_ind, answers, correct, answer_given):
 	_add_closing_button()	
 
 
+func _set_help(task_ind):
+	get_node("Background/Help").connect(
+		"pressed", 
+		self, 
+		"_need_help", 
+		[task_ind])	
+
+
+func _need_help(task_ind):
+	get_node("Background/Help").texture_normal = load("res://hand.jpg")
+	emit_signal("need_help", task_ind)
+
+
 func init_task_node(task_ind, task, answer_given):
 	print("init_task_node " + str(answer_given))
-	_set_description(task_ind, task.description)
+	_set_description(task_ind, task, task.description)
 	_set_answers(task_ind, task.answers, task.correct, answer_given)
+	_set_help(task_ind)

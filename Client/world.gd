@@ -50,6 +50,7 @@ func _task_open_button_pressed(task_ind, task):
 	
 	task_node.init_task_node(task_ind, task, answer_given)
 	task_node.connect("answer_is_given", self, "_task_answer_is_given")
+	task_node.connect("need_help", self, "_help_requested")
 
 
 func _task_answer_is_given(task_ind, is_answer_correct, answer_given):
@@ -67,6 +68,10 @@ func _task_answer_is_given(task_ind, is_answer_correct, answer_given):
 			"wrong"
 		)
 	gamestate.update_user_answer_given(task_ind, answer_given)
+
+
+func _help_requested(task_ind):
+	gamestate.help_requested(task_ind)
 
 
 func _update_task_style(node, style_param):
