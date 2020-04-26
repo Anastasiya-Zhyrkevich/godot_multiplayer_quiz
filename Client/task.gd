@@ -10,6 +10,7 @@ var button_styles = []
 func _ready():
 	get_node("Background/Description").text = ""
 	_set_font(get_node("Background/Description"), 18)
+	_set_font(get_node("Background/Number"), 18)
 	_set_font(get_node("Background/CorrectAnswer"), 18)
 	
 	button_styles = []
@@ -54,6 +55,7 @@ func _add_closing_button():
 
 func _set_description(task_ind, task, descr):
 	get_node("Background/Description").text = descr
+	get_node("Background/Number").text = str(task_ind)
 
 	var image = _load_task_image(task_ind, "task")
 	if not image:

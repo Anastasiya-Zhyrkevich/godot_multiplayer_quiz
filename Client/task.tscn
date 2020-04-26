@@ -20,7 +20,7 @@ __meta__ = {
 
 [node name="Description" type="Label" parent="Background"]
 margin_left = 6.0
-margin_top = 34.0
+margin_top = 57.0
 margin_right = 399.0
 margin_bottom = 397.0
 size_flags_horizontal = 12
@@ -86,3 +86,16 @@ stretch_mode = 5
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="Number" type="Label" parent="Background"]
+margin_left = 312.0
+margin_right = 396.0
+margin_bottom = 52.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="GridContainer" type="GridContainer" parent="Background"]
+margin_top = 416.0
+margin_right = 1023.0
+margin_bottom = 600.0

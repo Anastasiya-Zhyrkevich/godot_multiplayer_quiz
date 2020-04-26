@@ -4,13 +4,10 @@ const TASK_NODE = preload("res://task.tscn")
 
 var tasks_per_round = 3
 
-var TASK_TEXTURE = load("res://s_task.png")
-var TASK_DISABLED_TEXTURE = load("res://s_task_disabled.png")
-var TASK_CORRECT_TEXTURE = load("res://s_task_correct.png")
-var TASK_WRONG_TEXTURE = load("res://s_task_wrong.png")
-
 var Constants = preload("res://constants.gd")
 var answers_given = []
+
+const TASK_PREVIEW = preload("res://TaskPreview.tscn")
 
 signal user_answer_is_given(task_ind, answer_given)
 
@@ -23,23 +20,23 @@ func set_tasks(tasks, server_answers_given):
 	get_node("MarginContainer/ScrollContainer/GridContainer").set_columns(tasks_per_round)
 	
 	for i in range(tasks.size()):
-		var button = TextureButton.new()
+		var task_preview = TASK_PREVIEW.instance()
 		
-		_update_task_style(
-			button, 
+		task_preview.set_task_ind(i)
+		task_preview.update_task_style(
 			_get_style(answers_given[i], tasks[i].correct)
 		)
 		
 		if answers_given[i] == Constants.DISABLED_TASK:
-			button.disabled = true
+			task_preview.set_disabled(true)
 		
-		button.connect("pressed", 
+		task_preview.connect("pressed", 
 			self, 
 			"_task_open_button_pressed", 
 			[i, tasks[i]]
 		)
 		
-		get_node("MarginContainer/ScrollContainer/GridContainer").add_child(button)
+		get_node("MarginContainer/ScrollContainer/GridContainer").add_child(task_preview)
 
 
 func _task_open_button_pressed(task_ind, task):
@@ -58,35 +55,17 @@ func _task_answer_is_given(task_ind, is_answer_correct, answer_given):
 	answers_given[task_ind] = answer_given
 	print("_task_answer_is_given " + str(answers_given))
 	if is_answer_correct:
-		_update_task_style(
-			get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
-			"correct"
-		)
+		var preview = get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind)
+		preview.update_task_style("correct")
 	else:
-		_update_task_style(
-			get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
-			"wrong"
-		)
+		var preview = get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind)
+		preview.update_task_style("wrong")
 	gamestate.update_user_answer_given(task_ind, answer_given)
 
 
 func _help_requested(task_ind):
+	print("_help_requested")
 	gamestate.help_requested(task_ind)
-
-
-func _update_task_style(node, style_param):
-	node.texture_disabled = TASK_DISABLED_TEXTURE
-	
-	print("_update_task_style " + style_param)
-	
-	if style_param == "no_answer":
-		node.texture_normal = TASK_TEXTURE
-	elif style_param == "correct":
-		node.texture_normal = TASK_CORRECT_TEXTURE
-	elif style_param == "wrong":
-		node.texture_normal = TASK_WRONG_TEXTURE
-	else:
-		print ("Error! Unknown style param")
 
 
 func _get_style(answer_given, correct):
@@ -100,10 +79,12 @@ func _get_style(answer_given, correct):
 
 func _update_task_status(player_name, task_ind, answer_given):
 	if answers_given[task_ind] == Constants.DISABLED_TASK and answer_given != Constants.DISABLED_TASK:
-			get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind).disabled = false
+			var preview = get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind)
+			preview.set_disabled(false)
 	
 	answers_given[task_ind] = answer_given
-	_update_task_style(
-		get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind), 
-		 _get_style(answer_given, 100)  # Random correct number
+	
+	var preview = get_node("MarginContainer/ScrollContainer/GridContainer").get_child(task_ind)
+	preview.update_task_style(
+		_get_style(answer_given, 100)  # Random correct number
 	)

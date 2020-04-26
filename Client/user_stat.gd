@@ -23,7 +23,7 @@ func _set_font(node, font_size):
 
 func set_player_name(player_name):
 	print ("set_player_name")
-	get_node("Area/Label").text = player_name
+	get_node("Area2D/Label").text = player_name
 	
 	
 func _get_label(text):
@@ -36,35 +36,36 @@ func _get_label(text):
 	
 	
 func set_header(correct):
-	get_node("Area/GridContainer").set_columns(correct.size())
+	get_node("Area2D/GridContainer").set_columns(correct.size())
 	for i in range(correct.size()):		
-		get_node("Area/GridContainer").add_child(_get_label(str(i)))
+		get_node("Area2D/GridContainer").add_child(_get_label(str(i)))
 	for i in range(correct.size()):	
-		get_node("Area/GridContainer").add_child(_get_label(str(correct[i])))
+		get_node("Area2D/GridContainer").add_child(_get_label(str(correct[i])))
 	
 	
 func set_answers_given(correct, answers_given):
 	tasks_cnt = answers_given.size()
 	
-	get_node("Area/GridContainer").set_columns(answers_given.size())
+	get_node("Area2D/GridContainer").set_columns(answers_given.size())
 
 	for i in range(answers_given.size()):		
-		get_node("Area/GridContainer").add_child(_get_label(str(i)))
+		get_node("Area2D/GridContainer").add_child(_get_label(str(i)))
 	"""
 	for i in range(answers_given.size()):	
-		get_node("Area/GridContainer").add_child(_get_label(str(correct[i])))
+		get_node("Area2D/GridContainer").add_child(_get_label(str(correct[i])))
 	"""
 	for i in range(answers_given.size()):	
-		get_node("Area/GridContainer").add_child(_get_label(str(answers_given[i])))
+		get_node("Area2D/GridContainer").add_child(_get_label(str(answers_given[i])))
 		
 
 func update_answer_given(task_ind, answer_given):
 	var child_ind = info_rows_cnt * tasks_cnt + task_ind
-	get_node("Area/GridContainer").get_child(child_ind).set_text(answer_given)
+	get_node("Area2D/GridContainer").get_child(child_ind).set_text(answer_given)
+
 
 func update_player_help(task_ind):
 	var child_ind = info_rows_cnt * tasks_cnt + task_ind
-	get_node("Area/GridContainer").get_child(child_ind).add_color_override("font_color", Color(1,0,0))
+	get_node("Area2D/GridContainer").get_child(child_ind).add_color_override("font_color", Color(1,0,0))
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

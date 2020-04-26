@@ -94,6 +94,9 @@ margin_bottom = 80.0
 size_flags_horizontal = 2
 size_flags_vertical = 0
 text = "IP:"
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="IPAddress" type="LineEdit" parent="Connect"]
 margin_left = 17.0
@@ -102,7 +105,7 @@ margin_right = 173.0
 margin_bottom = 109.0
 size_flags_horizontal = 2
 size_flags_vertical = 2
-text = "godot-quiz.herokuapp.com/"
+text = "127.0.0.1:10567"
 __meta__ = {
 "_edit_use_anchors_": false
 }

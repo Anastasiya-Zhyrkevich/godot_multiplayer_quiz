@@ -74,6 +74,7 @@ func update_player_task(player_name, task_ind, answer_given):
 
 
 func _update_player_help(player_name, task_ind):
+	print("_update_player_help")
 	var ind = player_to_ind[player_name]
 	get_node("MarginContainer/ScrollContainer/GridContainer").get_child(ind).update_player_help(task_ind)
 	

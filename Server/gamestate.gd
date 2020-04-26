@@ -297,8 +297,11 @@ remote func _help_requested_from_user(task_ind):
 	var requested_id = get_tree().get_rpc_sender_id()
 	var player_name = players[requested_id]
 	players_to_help[player_name][task_ind] = true
-	
+
+	print('help_requested from ' + str(player_name))
+
 	if ADMIN_ID != -1:
+		print("help sent")
 		rpc_id(ADMIN_ID, "admin_help_requested", player_name, task_ind)
 
 	
