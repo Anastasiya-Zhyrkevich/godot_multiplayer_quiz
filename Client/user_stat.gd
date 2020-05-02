@@ -8,6 +8,8 @@ extends Control
 var tasks_cnt = 0
 var info_rows_cnt = 1
 
+var correct_answers = []
+var help_required = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -45,6 +47,10 @@ func set_header(correct):
 	
 func set_answers_given(correct, answers_given):
 	tasks_cnt = answers_given.size()
+	correct_answers = correct
+	
+	for i in range(tasks_cnt):
+		help_required.append(false)
 	
 	get_node("Area2D/GridContainer").set_columns(answers_given.size())
 
@@ -61,10 +67,14 @@ func set_answers_given(correct, answers_given):
 func update_answer_given(task_ind, answer_given):
 	var child_ind = info_rows_cnt * tasks_cnt + task_ind
 	get_node("Area2D/GridContainer").get_child(child_ind).set_text(answer_given)
+	
+	if not help_required[task_ind] and answer_given != correct_answers[task_ind]:
+		get_node("Area2D/GridContainer").get_child(child_ind).add_color_override("font_color", Color(0,0,1))
 
 
 func update_player_help(task_ind):
 	var child_ind = info_rows_cnt * tasks_cnt + task_ind
+	help_required[task_ind] = true
 	get_node("Area2D/GridContainer").get_child(child_ind).add_color_override("font_color", Color(1,0,0))
 	
 
